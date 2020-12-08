@@ -1,38 +1,74 @@
 package Controllers
 
 import (
+	"fmt"
 	"go-practice/Models"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllUsers(user *[]User) (err error) {
-	if err = Config.DB.Find(user).Error; err != nil {
-	 return err
+//GetUsers ... Get all users
+func GetUsers(c *gin.Context) {
+	var user []Models.User
+	err := Models.GetAllUsers(&user)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, user)
 	}
-	return nil
- }
- //CreateUser ... Insert New data
- func CreateUser(user *User) (err error) {
-	if err = Config.DB.Create(user).Error; err != nil {
-	 return err
+}
+
+//CreateUser ... Create User
+func CreateUser(c *gin.Context) {
+	var user Models.User
+	c.BindJSON(&user)
+	err := Models.CreateUser(&user)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, user)
 	}
-	return nil
- }
- //GetUserByID ... Fetch only one user by Id
- func GetUserByID(user *User, id string) (err error) {
-	if err = Config.DB.Where("id = ?", id).First(user).Error; err != nil {
-	 return err
+}
+
+//GetUserByID ... Get the user by id
+func GetUserByID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var user Models.User
+	err := Models.GetUserByID(&user, id)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, user)
 	}
-	return nil
- }
- //UpdateUser ... Update user
- func UpdateUser(user *User, id string) (err error) {
-	fmt.Println(user)
-	Config.DB.Save(user)
-	return nil
- }
- //DeleteUser ... Delete user
- func DeleteUser(user *User, id string) (err error) {
-	Config.DB.Where("id = ?", id).Delete(user)
-	return nil
- }
+}
+
+//UpdateUser ... Update the user information
+func UpdateUser(c *gin.Context) {
+	var user Models.User
+	id := c.Params.ByName("id")
+	err := Models.GetUserByID(&user, id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, user)
+	}
+	c.BindJSON(&user)
+	err = Models.UpdateUser(&user, id)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, user)
+	}
+}
+
+//DeleteUser ... Delete the user
+func DeleteUser(c *gin.Context) {
+	var user Models.User
+	id := c.Params.ByName("id")
+	err := Models.DeleteUser(&user, id)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.JSON(http.StatusOK, gin.H{"id" + id: "is deleted"})
+	}
+}
