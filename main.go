@@ -5,6 +5,10 @@ import (
 )
 
 func main() {
+	initializers()
+}
+
+func initializers() {
 	//variables
 	i := 10
 	var j int = 11
