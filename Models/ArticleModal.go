@@ -3,8 +3,8 @@ package Models
 //Article => returns article struct
 type Article struct {
 	ID    uint   `json:"id"`
-	title string `json:"title"`
-	desc  string `json:"description"`
+	Title string `json:"title"`
+	Desc  string `json:"description"`
 }
 
 //TableName => returns tablename

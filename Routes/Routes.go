@@ -17,5 +17,15 @@ func SetupRouter() *gin.Engine {
 		grp1.PUT("user/:id", Controllers.UpdateUser)
 		grp1.DELETE("user/:id", Controllers.DeleteUser)
 	}
+
+	grp2 := r.Group("/article")
+	{
+		grp2.GET("articles", Controllers.GetArticles)
+		grp2.POST("article", Controllers.CreateArticles)
+		grp2.GET("article/:id", Controllers.GetArticleByID)
+		grp2.PUT("article/:id", Controllers.UpdateArticle)
+		grp2.DELETE("article/:id", Controllers.DeleteArticle)
+
+	}
 	return r
 }

@@ -1,6 +1,7 @@
 package Models
 
 import (
+
 	//my sql driver
 	"go-practice/Config"
 
@@ -16,8 +17,7 @@ func GetAllArticles(article *[]Article) (err error) {
 }
 
 func CreateArticle(article *Article) (err error) {
-	err = Config.DB.Create(article).Error
-	if err != nil {
+	if err = Config.DB.Create(article).Error; err != nil {
 		return err
 	}
 	return nil
