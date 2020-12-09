@@ -16,6 +16,7 @@ type DBConfig struct {
 	Database string
 }
 
+//BuildDBConfig hhhn
 func BuildDBConfig() *DBConfig {
 	dbConfig := DBConfig{
 		Host:     "localhost",
@@ -27,6 +28,7 @@ func BuildDBConfig() *DBConfig {
 	return &dbConfig
 }
 
+//DbURL -> dd
 func DbURL(dbConfig *DBConfig) string {
 	return fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
