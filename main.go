@@ -5,13 +5,22 @@ import (
 	"go-practice/Config"
 	"go-practice/Models"
 	"go-practice/Routes"
+	"log"
+	"os"
 
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 var err error
 
 func main() {
+	err1 := godotenv.Load()
+	if err1 != nil {
+		log.Fatal("Error loading")
+	}
+	fromEnv := os.Getenv("ABC")
+	fmt.Println("From env:", fromEnv)
 	Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
 	if err != nil {
 		fmt.Println("Status:", err)
