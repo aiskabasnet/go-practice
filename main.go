@@ -19,15 +19,14 @@ func main() {
 	if err1 != nil {
 		log.Fatal("Error loading")
 	}
-	fromEnv := os.Getenv("ABC")
-	fmt.Println("From env:", fromEnv)
+
 	Config.DB, err = gorm.Open("mysql", Config.DbURL(Config.BuildDBConfig()))
 	if err != nil {
 		fmt.Println("Status:", err)
 	}
 	defer Config.DB.Close()
-	Config.DB.AutoMigrate(&Models.User{}, &Models.Article{})
+	Config.DB.AutoMigrate(&Models.User{}, &Models.Article{}, &Models.Order{}, &Models.Product{})
 	r := Routes.SetupRouter()
 	//running
-	r.Run(":8081")
+	r.Run(os.Getenv("PORT"))
 }
