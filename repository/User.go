@@ -3,7 +3,7 @@ package repository
 import (
 	"go-practice/Models"
 
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 type UserRepository interface {
