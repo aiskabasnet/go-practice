@@ -17,7 +17,7 @@ type orderHandler struct{
 
 func NewOrderHandler() OrderHandler{
 	return &orderHandler{
-		repo: repository.NewOrderRepository
+		repo: repository.NewOrderRepository()
 	}
 }
 
