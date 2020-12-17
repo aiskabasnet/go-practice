@@ -46,6 +46,23 @@ func (h *userHandler) GetAllUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 
 }
+func (h *userHandler) CreateUser(ctx *gin.Context) {
+	var user model.User
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	HashPassword(&user.Password)
+	user, err := h.repo.AddUser(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+
+	}
+	user.Password = ""
+	ctx.JSON(http.StatusOK, user)
+
+}
 func (h *userHandler) GetUser(ctx *gin.Context) {
 	id := ctx.Param("id")
 	intID, err := strconv.Atoi(id)
