@@ -1,19 +1,20 @@
 package middleware
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
-	"go-practice/handler"
 	"fmt"
+	"go-practice/handler"
+	"net/http"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 func Authorize() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		const BearerSchema string = "Bearer "
 		authHeader := ctx.GetHeader("Authorization")
-		if(authHeader == ""){
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No authorization header"}
-		)
+		if authHeader == "" {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No authorization header"})
 		}
 		tokenString := authHeader[len(BearerSchema):]
 		if token, err := handler.ValidateToken(tokenString); err != nil {
@@ -22,7 +23,7 @@ func Authorize() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "Not Valid Token"})
 
-		}else {
+		} else {
 
 			if claims, ok := token.Claims.(jwt.MapClaims); !ok {
 				ctx.AbortWithStatus(http.StatusUnauthorized)

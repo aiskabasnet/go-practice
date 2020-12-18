@@ -1,7 +1,10 @@
 package Routes
 
 import (
-	"go-practice/Controllers"
+	"fmt"
+	"go-practice/handler"
+	"go-practice/middleware"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,23 +12,42 @@ import (
 //SetupRouter ... Configure routes
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-	grp1 := r.Group("/user-api")
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{"message": "Welcome"})
+	})
+	userHandler := handler.NewUserHandler()
+	fmt.Println(userHandler)
+	productHandler := handler.NewProductHandler()
+	orderHandler := handler.NewOrderHandler()
+	apiRoutes := r.Group("/api")
+	userRoutes := apiRoutes.Group("/user")
+
 	{
-		grp1.GET("user", Controllers.GetUsers)
-		grp1.POST("user", Controllers.CreateUser)
-		grp1.GET("user/:id", Controllers.GetUserByID)
-		grp1.PUT("user/:id", Controllers.UpdateUser)
-		grp1.DELETE("user/:id", Controllers.DeleteUser)
+		userRoutes.POST("/register", userHandler.CreateUser)
+		userRoutes.POST("/signin", userHandler.SignIn)
 	}
 
-	grp2 := r.Group("/article")
+	userProtectedRoutes := apiRoutes.Group("/users", middleware.Authorize())
 	{
-		grp2.GET("articles", Controllers.GetArticles)
-		grp2.POST("article", Controllers.CreateArticles)
-		grp2.GET("article/:id", Controllers.GetArticleByID)
-		grp2.PUT("article/:id", Controllers.UpdateArticle)
-		grp2.DELETE("article/:id", Controllers.DeleteArticle)
+		userProtectedRoutes.GET("/", userHandler.GetAllUser)
+		userProtectedRoutes.GET("/:user", userHandler.GetUser)
+		userProtectedRoutes.GET("/:user/products", userHandler.GetProductsOrdered)
+		userProtectedRoutes.PUT("/:user", userHandler.UpdateUser)
+		userProtectedRoutes.DELETE("/:user", userHandler.DeleteUser)
+	}
 
+	productRoutes := apiRoutes.Group("/products", middleware.Authorize())
+	{
+		productRoutes.GET("/", productHandler.GetProducts)
+		productRoutes.GET("/:product", productHandler.GetProductById)
+		productRoutes.POST("/", productHandler.CreateProduct)
+		productRoutes.PUT("/:product", productHandler.UpdateProduct)
+		productRoutes.DELETE("/:product", productHandler.DeleteProduct)
+	}
+
+	orderRoutes := apiRoutes.Group("/order", middleware.Authorize())
+	{
+		orderRoutes.POST("/product/:productId/:userId/:quantity", orderHandler.OrderProduct)
 	}
 	return r
 }

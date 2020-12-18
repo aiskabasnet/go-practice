@@ -10,6 +10,7 @@ type UserRepository interface {
 	AddUser(Models.User) (Models.User, error)
 	GetAllUsers() ([]Models.User, error)
 	GetUserByID(int) (Models.User, error)
+	GetUserByEmail(string) (Models.User, error)
 	UpdateUser(Models.User) (Models.User, error)
 	DeleteUser(int) (Models.User, error)
 	GetProductOrdered(id int) ([]Models.Order, error)
@@ -34,7 +35,9 @@ func (db *userRepository) GetAllUsers() (users []Models.User, err error) {
 func (db *userRepository) GetUserByID(id int) (user Models.User, err error) {
 	return user, db.connection.First(&user, id).Error
 }
-
+func (db *userRepository) GetUserByEmail(email string) (user Models.User, err error) {
+	return user, db.connection.First(&user, "email=?", email).Error
+}
 func (db *userRepository) UpdateUser(user Models.User) (Models.User, error) {
 	if err := db.connection.First(&user, &user.ID).Error; err != nil {
 		return user, err
