@@ -49,5 +49,10 @@ func SetupRouter() *gin.Engine {
 	{
 		orderRoutes.POST("/product/:productId/:userId/:quantity", orderHandler.OrderProduct)
 	}
+	fileRoutes := r.Group("/file")
+	{
+		fileRoutes.POST("/single", handler.SingleFile)
+		fileRoutes.POST("/multiple", handler.MultipleFile)
+	}
 	return r
 }
