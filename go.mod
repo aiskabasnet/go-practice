@@ -12,7 +12,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/mattn/go-shellwords v1.0.10 // indirect
-	go.uber.org/fx v1.13.1 // indirect
+	go.uber.org/fx v1.13.1
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 	gorm.io/driver/sqlite v1.1.4
