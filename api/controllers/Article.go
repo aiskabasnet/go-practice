@@ -2,15 +2,15 @@ package Controllers
 
 import (
 	"fmt"
-	"go-practice/Models"
+	"go-practice/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetArticles(c *gin.Context) {
-	var articles []Models.Article
-	err := Models.GetAllArticles(&articles)
+	var articles []models.Article
+	err := models.GetAllArticles(&articles)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -23,7 +23,7 @@ func CreateArticles(c *gin.Context) {
 	var article Models.Article
 	fmt.Println("article", article)
 	c.BindJSON(&article)
-	err := Models.CreateArticle(&article)
+	err := models.CreateArticle(&article)
 	if err != nil {
 		fmt.Println("Error", err)
 		c.AbortWithStatus(http.StatusNotFound)
@@ -34,9 +34,9 @@ func CreateArticles(c *gin.Context) {
 }
 
 func GetArticleByID(c *gin.Context) {
-	var article Models.Article
+	var article models.Article
 	id := c.Params.ByName("id")
-	err := Models.GetArticleById(&article, id)
+	err := models.GetArticleById(&article, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -45,14 +45,14 @@ func GetArticleByID(c *gin.Context) {
 }
 
 func UpdateArticle(c *gin.Context) {
-	var article Models.Article
+	var article models.Article
 	id := c.Params.ByName("id")
-	err := Models.GetArticleById(&article, id)
+	err := models.GetArticleById(&article, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, article)
 	}
 	c.BindJSON(&article)
-	err = Models.UpdateArticle(&article, id)
+	err = models.UpdateArticle(&article, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -61,10 +61,10 @@ func UpdateArticle(c *gin.Context) {
 }
 
 func DeleteArticle(c *gin.Context) {
-	var article Models.Article
+	var article models.Article
 	id := c.Params.ByName("id")
 
-	err := Models.DeleteArticle(&article, id)
+	err := models.DeleteArticle(&article, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {

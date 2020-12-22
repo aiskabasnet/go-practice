@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"go-practice/Models"
-	"go-practice/repository"
+	"go-practice/api/repository"
+	"go-practice/models"
 	"net/http"
 	"strconv"
 
@@ -53,7 +53,7 @@ func (h *userHandler) GetAllUser(ctx *gin.Context) {
 
 }
 func (h *userHandler) CreateUser(ctx *gin.Context) {
-	var user Models.User
+	var user models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -86,7 +86,7 @@ func (h *userHandler) GetUser(ctx *gin.Context) {
 
 }
 func (h *userHandler) SignIn(ctx *gin.Context) {
-	var user Models.User
+	var user models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
@@ -108,7 +108,7 @@ func (h *userHandler) SignIn(ctx *gin.Context) {
 
 }
 func (h *userHandler) UpdateUser(ctx *gin.Context) {
-	var user Models.User
+	var user models.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -129,7 +129,7 @@ func (h *userHandler) UpdateUser(ctx *gin.Context) {
 
 }
 func (h *userHandler) DeleteUser(ctx *gin.Context) {
-	var user Models.User
+	var user models.User
 	id := ctx.Param("user")
 	intID, _ := strconv.Atoi(id)
 	user.ID = uint(intID)

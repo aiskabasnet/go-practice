@@ -2,8 +2,8 @@ package Routes
 
 import (
 	"fmt"
+	"go-practice/api/middleware"
 	"go-practice/handler"
-	"go-practice/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

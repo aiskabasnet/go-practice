@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"go-practice/repository"
+	"go-practice/api/repository"
 	"net/http"
 	"strconv"
 

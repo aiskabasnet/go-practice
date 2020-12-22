@@ -2,7 +2,7 @@ package Controllers
 
 import (
 	"fmt"
-	"go-practice/Models"
+	"go-practice/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +10,8 @@ import (
 
 //GetUsers ... Get all users
 func GetUsers(c *gin.Context) {
-	var user []Models.User
-	err := Models.GetAllUsers(&user)
+	var user []models.User
+	err := models.GetAllUsers(&user)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -21,9 +21,9 @@ func GetUsers(c *gin.Context) {
 
 //CreateUser ... Create User
 func CreateUser(c *gin.Context) {
-	var user Models.User
+	var user models.User
 	c.BindJSON(&user)
-	err := Models.CreateUser(&user)
+	err := models.CreateUser(&user)
 	if err != nil {
 		fmt.Println(err.Error())
 		c.AbortWithStatus(http.StatusNotFound)
@@ -35,8 +35,8 @@ func CreateUser(c *gin.Context) {
 //GetUserByID ... Get the user by id
 func GetUserByID(c *gin.Context) {
 	id := c.Params.ByName("id")
-	var user Models.User
-	err := Models.GetUserByID(&user, id)
+	var user models.User
+	err := models.GetUserByID(&user, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -46,14 +46,14 @@ func GetUserByID(c *gin.Context) {
 
 //UpdateUser ... Update the user information
 func UpdateUser(c *gin.Context) {
-	var user Models.User
+	var user models.User
 	id := c.Params.ByName("id")
-	err := Models.GetUserByID(&user, id)
+	err := models.GetUserByID(&user, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, user)
 	}
 	c.BindJSON(&user)
-	err = Models.UpdateUser(&user, id)
+	err = models.UpdateUser(&user, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {
@@ -63,9 +63,9 @@ func UpdateUser(c *gin.Context) {
 
 //DeleteUser ... Delete the user
 func DeleteUser(c *gin.Context) {
-	var user Models.User
+	var user models.User
 	id := c.Params.ByName("id")
-	err := Models.DeleteUser(&user, id)
+	err := models.DeleteUser(&user, id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	} else {

@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go-practice/Models"
-	"go-practice/repository"
+	"go-practice/api/repository"
+	"go-practice/models"
 	"net/http"
 	"strconv"
 
@@ -56,7 +56,7 @@ func (h *productHandler) GetProductById(ctx *gin.Context) {
 }
 
 func (h *productHandler) CreateProduct(ctx *gin.Context) {
-	var product Models.Product
+	var product models.Product
 	if err := ctx.ShouldBindJSON(&product); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -72,7 +72,7 @@ func (h *productHandler) CreateProduct(ctx *gin.Context) {
 }
 func (h *productHandler) UpdateProduct(ctx *gin.Context) {
 
-	var product Models.Product
+	var product models.Product
 	if err := ctx.ShouldBindJSON(&product); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -95,7 +95,7 @@ func (h *productHandler) UpdateProduct(ctx *gin.Context) {
 }
 func (h *productHandler) DeleteProduct(ctx *gin.Context) {
 
-	var product Models.Product
+	var product models.Product
 	prodStr := ctx.Param("product")
 	prodID, _ := strconv.Atoi(prodStr)
 	product.ID = uint(prodID)

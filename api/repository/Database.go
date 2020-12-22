@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"go-practice/Models"
+	"go-practice/models"
 	"log"
 	"os"
 
@@ -15,6 +15,6 @@ func DB() *gorm.DB {
 		log.Fatal("Couldnot connect to database:" + err.Error())
 		return nil
 	}
-	db.AutoMigrate(&Models.User{}, &Models.Order{}, &Models.Product{})
+	db.AutoMigrate(&models.User{}, &models.Order{}, &models.Product{})
 	return db
 }

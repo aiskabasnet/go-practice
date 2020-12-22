@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-practice/Routes"
+	Routes "go-practice/api/routes"
 	"log"
 	"os"
 

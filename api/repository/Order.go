@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"go-practice/Models"
+	"go-practice/models"
 
 	"github.com/jinzhu/gorm"
 )
@@ -19,7 +19,7 @@ func NewOrderRepository() OrderRepository {
 }
 
 func (db *orderRepository) OrderProduct(userId int, productId int, quantity int) error {
-	return db.connection.Create(&Models.Order{
+	return db.connection.Create(&models.Order{
 		ProductID: uint(productId),
 		Quantity:  quantity,
 		UserID:    uint(userId),
