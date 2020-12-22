@@ -17,7 +17,6 @@ func main() {
 	}
 	fb := infrastructure.InitializeFirebase()
 	seeds.LoadAdmin(fb)
-	log.Println("Firebase done", fb)
 	r := Routes.SetupRouter()
 	//running
 	log.Fatal(r.Run(os.Getenv("PORT")))
