@@ -19,6 +19,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5 // indirect
 	google.golang.org/api v0.36.0
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
+	gorm.io/driver/mysql v1.0.3
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.20.8
 )
