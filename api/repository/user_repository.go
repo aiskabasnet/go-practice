@@ -2,8 +2,9 @@ package repository
 
 import (
 	"go-practice/models"
+	"log"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type UserRepository interface {
@@ -14,14 +15,21 @@ type UserRepository interface {
 	UpdateUser(models.User) (models.User, error)
 	DeleteUser(int) (models.User, error)
 	GetProductOrdered(id int) ([]models.Order, error)
+	Migrate() error
 }
 
 type userRepository struct {
 	connection *gorm.DB
 }
 
-func NewUserRepository() UserRepository {
-	return &userRepository{connection: DB()}
+// NewUserRepository => new user repo
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &userRepository{connection: db}
+}
+
+func (db *userRepository) Migrate() error {
+	log.Print("[UserRepository]...Migrate")
+	return db.connection.AutoMigrate(&models.User{})
 }
 
 func (db *userRepository) AddUser(user models.User) (models.User, error) {

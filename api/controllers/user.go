@@ -1,4 +1,4 @@
-package Controllers
+package controllers
 
 import (
 	"fmt"
@@ -7,6 +7,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type UserInterface interface {
+	GetUsers(c *gin.Context)
+	CreateUser(c *gin.Context)
+	GetUserByID(c *gin.Context)
+	DeleteUser(c *gin.Context)
+	UpdateUser(c *gin.Context)
+}
+
+type FirebaseUser struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	UserType string `json:"user_type"`
+	UID      string `json:"uid"`
+	SNS      bool   `json:"sns"`
+}
 
 //GetUsers ... Get all users
 func GetUsers(c *gin.Context) {

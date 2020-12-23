@@ -1,23 +1,15 @@
 package main
 
 import (
-	Routes "go-practice/api/routes"
 	"go-practice/api/seeds"
 	"go-practice/infrastructure"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
+	"go-practice/utils"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading")
-	}
+	utils.LoadEnv()
+	db := infrastructure.SetupModels()
 	fb := infrastructure.InitializeFirebase()
 	seeds.LoadAdmin(fb)
-	r := Routes.SetupRouter()
-	//running
-	log.Fatal(r.Run(os.Getenv("PORT")))
+	infrastructure.SetupRoutes(db, fb)
 }
