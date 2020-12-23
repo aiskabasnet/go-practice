@@ -14,7 +14,6 @@ type UserRepository interface {
 	GetUserByEmail(string) (models.User, error)
 	UpdateUser(models.User) (models.User, error)
 	DeleteUser(int) (models.User, error)
-	GetProductOrdered(id int) ([]models.Order, error)
 	Migrate() error
 }
 
@@ -59,6 +58,6 @@ func (db *userRepository) DeleteUser(id int) (user models.User, err error) {
 	return user, db.connection.Delete(&user).Error
 }
 
-func (db *userRepository) GetProductOrdered(id int) (orders []models.Order, err error) {
-	return orders, db.connection.Where("id=?", id).Find(&orders).Error
-}
+// func (db *userRepository) GetProductOrdered(id int) (orders []models.Order, err error) {
+// 	return orders, db.connection.Where("id=?", id).Find(&orders).Error
+// }
