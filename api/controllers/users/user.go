@@ -48,10 +48,39 @@ func (u *userController) GetUsers(c *gin.Context) {
 }
 
 //CreateUser ... Create User
-func CreateUser(c *gin.Context) {
+func (u *userController) CreateUser(c *gin.Context) {
 	var user models.User
-	c.BindJSON(&user)
-	err := models.CreateUser(&user)
+	var firebaseUser firebaseUser
+	if err := c.ShouldBindJSON(&firebaseUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var fbID string
+	var err error
+	if !firebaseUser.SNS {
+		fbID, err = u.fbService.CreateUser(firebaseUser.Email, firebaseUser.Password)
+		//if already registered
+		if err != nil {
+			u.fbService.DeleteUser(fbID)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "This User is already Registered"})
+			return
+		}
+	} else {
+		fbID, err = u.fbService.UpdateUser(fbUser.UID, true)
+	}
+	randUserName := utils.GenerateRandomInvitationCode(12)
+
+	user.UserName = randUserName
+	user.Email = fbUser.Email
+	user.UserType = fbUser.UserType
+	user.ID = fbID
+	if fbUser.SNS {
+		user.ID = fbUser.UID
+	}
+
+	_, err = u.userService.Save(user, fbUser.SNS)
+
+	err = models.CreateUser(&user)
 	if err != nil {
 		fmt.Println(err.Error())
 		c.AbortWithStatus(http.StatusNotFound)
