@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"fmt"
+	fbservice "go-practice/api/service"
+	service "go-practice/api/service/user"
 	"go-practice/models"
 	"net/http"
 
@@ -16,22 +18,32 @@ type UserInterface interface {
 	UpdateUser(c *gin.Context)
 }
 
-type FirebaseUser struct {
+type firebaseUser struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	UserType string `json:"user_type"`
 	UID      string `json:"uid"`
 	SNS      bool   `json:"sns"`
 }
+type userController struct {
+	fbService   fbservice.FirebaseService
+	userService service.UserService
+}
+
+func NewUserController(s service.UserService, f fbservice.FirebaseService) UserInterface {
+	return &userController{
+		fbService:   f,
+		userService: s,
+	}
+}
 
 //GetUsers ... Get all users
-func GetUsers(c *gin.Context) {
-	var user []models.User
-	err := models.GetAllUsers(&user)
+func (u *userController) GetUsers(c *gin.Context) {
+	users, err := u.userService.GetAllUsers()
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error in fetching data"})
 	} else {
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, gin.H{"data": users})
 	}
 }
 
