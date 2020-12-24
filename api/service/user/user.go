@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"go-practice/api/repository"
 	repository "go-practice/api/repository/user"
 	"go-practice/models"
+	"go-practice/utils"
 )
 
 type UserService interface {
@@ -14,6 +14,7 @@ type UserService interface {
 	GetUserByEmail(string) (models.User, error)
 	UpdateUser(models.User) (models.User, error)
 	DeleteUser(int) (models.User, error)
+	GetUsers(utils.PaginationStruct) ([]models.User, int64, error)
 }
 
 type userService struct {
@@ -46,6 +47,10 @@ func (u *userService) UpdateUser(user models.User) (models.User, error) {
 	return u.userRepository.UpdateUser(user)
 
 }
-func (u *userService) DeleteUser(id int) (models.User, error) {
+func (u *userService) GetUsers(pagination utils.PaginationStruct) (users []models.User, count int64, err error) {
+	return u.userRepository.GetUsers(pagination)
+}
+
+func (u *userService) DeleteUser(id string) (models.User, error) {
 	return u.userRepository.DeleteUser(id)
 }

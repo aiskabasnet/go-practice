@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go-practice/models"
+	"go-practice/utils"
 	"log"
 
 	"gorm.io/gorm"
@@ -10,11 +11,12 @@ import (
 type UserRepository interface {
 	AddUser(models.User) (models.User, error)
 	GetAllUsers() ([]models.User, error)
-	GetUserByID(int) (models.User, error)
+	GetUserByID(string) (models.User, error)
 	GetUserByEmail(string) (models.User, error)
 	UpdateUser(models.User) (models.User, error)
-	DeleteUser(int) (models.User, error)
+	DeleteUser(string) (models.User, error)
 	Migrate() error
+	GetUsers(utils.PaginationStruct) ([]models.User, int64, error)
 }
 
 type userRepository struct {
@@ -38,8 +40,12 @@ func (db *userRepository) AddUser(user models.User) (models.User, error) {
 func (db *userRepository) GetAllUsers() (users []models.User, err error) {
 	return users, db.connection.Find(&users).Error
 }
+func (db *userRepository) GetUsers(pagination utils.PaginationStruct) (users []models.User, count int64, err error) {
+	db.connection.Model(&models.User{}).Where("user_type=?", "user").Count(&count)
+	return users, count, db.connection.Offset(pagination.Page).Limit(pagination.PageSize).Where("user_type = ?", "user").Find(&users).Error
+}
 
-func (db *userRepository) GetUserByID(id int) (user models.User, err error) {
+func (db *userRepository) GetUserByID(id string) (user models.User, err error) {
 	return user, db.connection.First(&user, id).Error
 }
 func (db *userRepository) GetUserByEmail(email string) (user models.User, err error) {
@@ -51,7 +57,7 @@ func (db *userRepository) UpdateUser(user models.User) (models.User, error) {
 	}
 	return user, db.connection.Updates(&user).Error
 }
-func (db *userRepository) DeleteUser(id int) (user models.User, err error) {
+func (db *userRepository) DeleteUser(id string) (user models.User, err error) {
 	if err := db.connection.First(&user, id).Error; err != nil {
 		return user, err
 	}
