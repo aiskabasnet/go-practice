@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"go-practice/api/responses"
 	fbservice "go-practice/api/service"
 	service "go-practice/api/service/user"
@@ -61,16 +62,15 @@ func (u *userController) CreateUser(c *gin.Context) {
 		fbID, err = u.fbService.CreateUser(firebaseUser.Email, firebaseUser.Password)
 		//if already registered
 		if err != nil {
-			u.fbService.DeleteUser(fbID)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "This User is already Registered"})
 			return
 		}
 	} else {
-		fbID, err = u.fbService.UpdateUser(fbUser.UID, true)
+		fbID, err = u.fbService.UpdateUser(firebaseUser.UID, true)
 	}
 	randUserName := utils.GenerateRandomInvitationCode(12)
 
-	user.UserName = randUserName
+	user.Username = randUserName
 	user.Email = firebaseUser.Email
 	user.UserType = firebaseUser.UserType
 	user.ID = fbID
@@ -85,6 +85,7 @@ func (u *userController) CreateUser(c *gin.Context) {
 			return
 
 		}
+		fmt.Println("User: ", user)
 		u.fbService.DeleteUser(user.ID)
 
 		responses.ErrorJSON(c, http.StatusBadRequest, "This User is already Registered")
@@ -103,7 +104,7 @@ func (u *userController) CreateUser(c *gin.Context) {
 func (u *userController) GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
-	err := u.userService.GetUserByID(id)
+	_, err := u.userService.GetUserByID(id)
 	if err != nil {
 		responses.ErrorJSON(c, http.StatusBadGateway, err.Error())
 		return
@@ -122,9 +123,9 @@ func (u *userController) UpdateUser(c *gin.Context) {
 		return
 	}
 	// if not user
-	err := u.userService.GetUserByID(id)
+	_, err := u.userService.GetUserByID(id)
 	if err != nil {
-		responses.ErrorJSON(e, http.StatusNotFound, err.Error())
+		responses.ErrorJSON(c, http.StatusNotFound, err.Error())
 	}
 	user.ID = id
 	// update claim
@@ -137,7 +138,7 @@ func (u *userController) UpdateUser(c *gin.Context) {
 	updatedUser, err := u.userService.UpdateUser(user)
 
 	if err != nil {
-		responses.ErrorJSON(e, http.StatusBadGateway, err.Error())
+		responses.ErrorJSON(c, http.StatusBadGateway, err.Error())
 	}
 	responses.SuccessJSON(c, http.StatusOK, updatedUser)
 }

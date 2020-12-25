@@ -12,6 +12,8 @@ type User struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Phone     string    `json:"phone"`
+	Username  string    `json:"username`
+	UserType  string    `json:"user_type`
 	Password  string    `json:"password" binding:"required"`
 	Address   string    `json:"address"`
 	CreatedAt time.Time `json:"created_at"`

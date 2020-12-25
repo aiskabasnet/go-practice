@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"os"
 
+	"go-practice/api/routes"
+
 	"firebase.google.com/go/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -24,7 +26,7 @@ func SetupRoutes(db *gorm.DB, fb *auth.Client) {
 	httpRouter.GET("/test", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"data": "Go Practice API Server is Running..."})
 	})
-
+	routes.UserRoutes(httpRouter.Group("user"), db, fb)
 	port := os.Getenv("PORT")
 	if port == "" {
 		httpRouter.Run()

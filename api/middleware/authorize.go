@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"fmt"
-	"strings"
-	"net/http"
 	"go-practice/api/service"
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,18 +12,18 @@ func Auth(s service.FirebaseService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		const BearerSchema string = "Bearer "
 		header := ctx.GetHeader("Authorization")
-		if authHeader == "" {
+		if header == "" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No authorization header"})
 		}
-		idToken := strings.TrimSpace(strings.Replace(header, "Bearer","",1))
+		idToken := strings.TrimSpace(strings.Replace(header, "Bearer", "", 1))
 		token, err := s.VerifyToken(idToken)
-		if err != nil{
-			c.JSON(http.StatusUnauthorized, err.Error())
-			c.Abort()
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, err.Error())
+			ctx.Abort()
 			return
 		}
-		c.Set("ID", token.UID)
-		c.Next()
+		ctx.Set("ID", token.UID)
+		ctx.Next()
 
 	}
 }

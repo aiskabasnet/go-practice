@@ -54,7 +54,7 @@ func (fb *firebaseService) GetUser(uid string) (*auth.UserRecord, error) {
 	return user, err
 }
 func (fb *firebaseService) UpdateUser(uid string, verified bool) (string, error) {
-	params := (&auth.UserToCreate{}).EmailVerified(verified)
+	params := (&auth.UserToUpdate{}).EmailVerified(verified)
 	u, err := fb.Firebase.UpdateUser(context.Background(), uid, params)
 	if err != nil {
 		return "", err

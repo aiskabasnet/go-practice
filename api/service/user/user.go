@@ -10,10 +10,10 @@ import (
 type UserService interface {
 	AddUser(models.User) (models.User, error)
 	GetAllUsers() ([]models.User, error)
-	GetUserByID(int) (models.User, error)
+	GetUserByID(string) (models.User, error)
 	GetUserByEmail(string) (models.User, error)
 	UpdateUser(models.User) (models.User, error)
-	DeleteUser(int) (models.User, error)
+	DeleteUser(string) (models.User, error)
 	GetUsers(utils.PaginationStruct) ([]models.User, int64, error)
 }
 
