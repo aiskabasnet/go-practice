@@ -15,7 +15,6 @@ type UserInterface interface {
 	GetUsers(c *gin.Context)
 	CreateUser(c *gin.Context)
 	GetUserByID(c *gin.Context)
-	DeleteUser(c *gin.Context)
 	UpdateUser(c *gin.Context)
 }
 
@@ -101,42 +100,44 @@ func (u *userController) CreateUser(c *gin.Context) {
 }
 
 //GetUserByID ... Get the user by id
-func GetUserByID(c *gin.Context) {
-	id := c.Params.ByName("id")
+func (u *userController) GetUserByID(c *gin.Context) {
+	id := c.Param("id")
 	var user models.User
-	err := models.GetUserByID(&user, id)
+	err := u.userService.GetUserByID(id)
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		responses.ErrorJSON(c, http.StatusBadGateway, err.Error())
+		return
 	} else {
-		c.JSON(http.StatusOK, user)
+		responses.SuccessJSON(c, http.StatusOK, user)
 	}
 }
 
 //UpdateUser ... Update the user information
-func UpdateUser(c *gin.Context) {
+func (u *userController) UpdateUser(c *gin.Context) {
 	var user models.User
 	id := c.Params.ByName("id")
-	err := models.GetUserByID(&user, id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, user)
-	}
-	c.BindJSON(&user)
-	err = models.UpdateUser(&user, id)
-	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-	} else {
-		c.JSON(http.StatusOK, user)
-	}
-}
 
-//DeleteUser ... Delete the user
-func DeleteUser(c *gin.Context) {
-	var user models.User
-	id := c.Params.ByName("id")
-	err := models.DeleteUser(&user, id)
-	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
-	} else {
-		c.JSON(http.StatusOK, gin.H{"id" + id: "is deleted"})
+	if err := c.ShouldBindJSON(&user); err != nil {
+		responses.ErrorJSON(c, http.StatusBadRequest, err.Error())
+		return
 	}
+	// if not user
+	err := u.userService.GetUserByID(id)
+	if err != nil {
+		responses.ErrorJSON(e, http.StatusNotFound, err.Error())
+	}
+	user.ID = id
+	// update claim
+	if user.UserType != "" {
+		//Add auth claims to the user
+		claims := gin.H{"role": user.UserType}
+		u.fbService.SetClaim(id, claims)
+
+	}
+	updatedUser, err := u.userService.UpdateUser(user)
+
+	if err != nil {
+		responses.ErrorJSON(e, http.StatusBadGateway, err.Error())
+	}
+	responses.SuccessJSON(c, http.StatusOK, updatedUser)
 }
