@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"fmt"
+	"go-practice/api/responses"
 	fbservice "go-practice/api/service"
 	service "go-practice/api/service/user"
 	"go-practice/models"
+	"go-practice/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -71,22 +72,32 @@ func (u *userController) CreateUser(c *gin.Context) {
 	randUserName := utils.GenerateRandomInvitationCode(12)
 
 	user.UserName = randUserName
-	user.Email = fbUser.Email
-	user.UserType = fbUser.UserType
+	user.Email = firebaseUser.Email
+	user.UserType = firebaseUser.UserType
 	user.ID = fbID
-	if fbUser.SNS {
-		user.ID = fbUser.UID
+	if firebaseUser.SNS {
+		user.ID = firebaseUser.UID
 	}
 
-	_, err = u.userService.Save(user, fbUser.SNS)
-
-	err = models.CreateUser(&user)
+	_, err = u.userService.AddUser(user)
 	if err != nil {
-		fmt.Println(err.Error())
-		c.AbortWithStatus(http.StatusNotFound)
-	} else {
-		c.JSON(http.StatusOK, user)
+		if err.Error() == "This is Login" {
+			responses.SuccessJSON(c, http.StatusOK, "This is Login")
+			return
+
+		}
+		u.fbService.DeleteUser(user.ID)
+
+		responses.ErrorJSON(c, http.StatusBadRequest, "This User is already Registered")
+		return
 	}
+	//Add auth claims to the user
+
+	claims := gin.H{"role": user.UserType}
+	err = u.fbService.SetClaim(fbID, claims)
+
+	responses.SuccessJSON(c, http.StatusOK, "SuccessFully Added User")
+
 }
 
 //GetUserByID ... Get the user by id
